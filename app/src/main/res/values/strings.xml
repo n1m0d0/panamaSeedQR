@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">SeedQR</string>
+    <string name="send">Comprobar</string>
+    <string name="renew">Renovar</string>
+    <string name="url">https://testdg.xpertise-pa.com/api/</string>
+</resources>
