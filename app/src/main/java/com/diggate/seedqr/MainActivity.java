@@ -7,15 +7,19 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +53,11 @@ public class MainActivity extends AppCompatActivity {
     Button btnSend;
     Button btnRenew;
     ImageView ivQR;
+    ImageView ivVisible;
     TextView tvTime;
+    TextView tvSecond;
+    ProgressBar pbTime;
+    int status = 0;
 
     private Handler handler = new Handler();
 
@@ -63,7 +71,10 @@ public class MainActivity extends AppCompatActivity {
         btnSend = findViewById(R.id.btnSend);
         btnRenew = findViewById(R.id.btnRenew);
         ivQR = findViewById(R.id.ivQR);
+        ivVisible = findViewById(R.id.ivVisible);
         tvTime = findViewById(R.id.tvTime);
+        tvSecond = findViewById(R.id.tvSecond);
+        pbTime = findViewById(R.id.pbTime);
 
         btnRenew.setVisibility(View.GONE);
 
@@ -130,6 +141,22 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        ivVisible.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(status == 0) {
+                    etSeed.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    status = 1;
+                    ivVisible.setImageDrawable(getDrawable(R.drawable.ic_baseline_visibility_off_24));
+                } else {
+                    etSeed.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    status = 0;
+                    ivVisible.setImageDrawable(getDrawable(R.drawable.ic_baseline_visibility_24));
+                }
+
+            }
+        });
     }
 
     private void generateQR(String seed) {
@@ -165,12 +192,19 @@ public class MainActivity extends AppCompatActivity {
             int value1 = 60;
             int value2 = Integer.parseInt(getDateTime());
             int value3 = value1 - value2;
-            tvTime.setText("" + value3);
+            pbTime.setProgress(value3);
+            tvSecond.setText("" + value3);
             if(value3 == 60) {
                 Log.w("date", "" + getDate());
                 String textQR = etSeed.getText().toString().trim() + "|" + encryptSeed(etSeed.getText().toString().trim() + getDate());
                 Log.w("txtQR", textQR);
                 generateQR(textQR);
+            }
+            if (value3 <= 10)
+            {
+                tvTime.setTextColor(Color.RED);
+            } else {
+                tvTime.setTextColor(getResources().getColor(R.color.colorPrimary));
             }
             startTimer();
         }
