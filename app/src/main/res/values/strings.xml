@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SeedQR</string>
+    <string name="app_name">Credgate</string>
     <string name="send">Guardar</string>
     <string name="renew">Renovar</string>
     <string name="url">https://testdg.xpertise-pa.com/api/</string>

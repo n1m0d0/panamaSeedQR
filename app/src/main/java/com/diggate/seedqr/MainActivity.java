@@ -202,8 +202,10 @@ public class MainActivity extends AppCompatActivity {
             }
             if (value3 <= 10)
             {
+                tvSecond.setTextColor(Color.RED);
                 tvTime.setTextColor(Color.RED);
             } else {
+                tvSecond.setTextColor(getResources().getColor(R.color.colorPrimary));
                 tvTime.setTextColor(getResources().getColor(R.color.colorPrimary));
             }
             startTimer();
