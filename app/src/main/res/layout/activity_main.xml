@@ -15,6 +15,23 @@
         android:layout_marginBottom="20dp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:text="Bienvenido a Dig-ID, tu credencial digital."
+        android:textColor="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold|italic"
+        android:textSize="20dp"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:text="A continuación registra el codigo que te asignamos."
+        android:textColor="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold|italic"
+        android:layout_marginBottom="10dp"
+        android:textSize="20dp"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:text="Ingrese el codigo semilla"
         android:textColor="@color/colorPrimary"
         android:layout_width="match_parent"
@@ -46,94 +63,10 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:background="@drawable/custom_button"
-        android:id="@+id/btnSend"
+        android:id="@+id/btnStart"
         android:textColor="@color/colorWhite"
-        android:text="@string/send"
+        android:text="@string/start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"/>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:background="@drawable/custom_button"
-        android:id="@+id/btnRenew"
-        android:textColor="@color/colorWhite"
-        android:text="@string/renew"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:orientation="horizontal"
-        android:background="@drawable/shape_rectangle"
-        android:gravity="center"
-        android:layout_gravity="center">
-
-        <ImageView
-            android:id="@+id/ivQR"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:src="@drawable/ic_baseline_vpn_lock_24"
-            android:layout_margin="10dp"
-            android:layout_weight="5"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:layout_margin="15dp"
-            android:layout_weight="5"
-            android:background="@drawable/shape_rectangle2"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ProgressBar
-                android:id="@+id/pbTime"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:layout_above="@+id/tvTime"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="34dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="35dp"
-                android:layout_marginBottom="6dp"
-                android:background="@drawable/shape_circle"
-                android:indeterminate="false"
-                android:max="60"
-                android:progress="0"
-                android:progressDrawable="@drawable/circle_progress"
-                android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/tvTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="1dp"
-                android:gravity="center"
-                android:text="Segundos para cambiar"
-                android:textColor="@color/colorPrimary"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/tvSecond"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="65dp"
-                android:gravity="center"
-                android:text="00"
-                android:textColor="@color/colorPrimary"
-                android:textSize="48dp" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-
-
 </LinearLayout>

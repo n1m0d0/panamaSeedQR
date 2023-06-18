@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -50,16 +51,9 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     EditText etSeed;
-    Button btnSend;
-    Button btnRenew;
-    ImageView ivQR;
+    Button btnStart;
     ImageView ivVisible;
-    TextView tvTime;
-    TextView tvSecond;
-    ProgressBar pbTime;
     int status = 0;
-
-    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,15 +62,8 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         etSeed = findViewById(R.id.etSeed);
-        btnSend = findViewById(R.id.btnSend);
-        btnRenew = findViewById(R.id.btnRenew);
-        ivQR = findViewById(R.id.ivQR);
+        btnStart = findViewById(R.id.btnStart);
         ivVisible = findViewById(R.id.ivVisible);
-        tvTime = findViewById(R.id.tvTime);
-        tvSecond = findViewById(R.id.tvSecond);
-        pbTime = findViewById(R.id.pbTime);
-
-        btnRenew.setVisibility(View.GONE);
 
         if (!connectionTest()) {
             Toast.makeText(MainActivity.this, "Debe contar con connection a internet", Toast.LENGTH_LONG).show();
@@ -84,21 +71,16 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             if (!checkSession().equals("")) {
-                etSeed.setText(checkSession());
                 JSONObject sendData = new JSONObject();
-                sendData.put("seed", etSeed.getText().toString().trim());
+                sendData.put("seed", checkSession());
                 Log.w("json", "" + sendData);
                 verifySeed("validateSeed", sendData);
-                /*String textQR = etSeed.getText().toString().trim() + "|" + encryptSeed(etSeed.getText().toString().trim() + getDate());
-                Log.w("txtQR", textQR);
-                generateQR(textQR);
-                startTimer();*/
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        btnSend.setOnClickListener(new View.OnClickListener() {
+        btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!connectionTest()) {
@@ -111,29 +93,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject sendData = new JSONObject();
                             sendData.put("seed", etSeed.getText().toString().trim());
                             Log.w("json", "" + sendData);
-                            checkSeed("authSeed", sendData);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        });
-
-        btnRenew.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!connectionTest()) {
-                    Toast.makeText(MainActivity.this, "Debe contar con connection a internet", Toast.LENGTH_LONG).show();
-                } else {
-                    if (etSeed.getText().toString().trim().equals("")) {
-                        Toast.makeText(MainActivity.this, "Debe Ingresar la Semilla", Toast.LENGTH_SHORT).show();
-                    } else {
-                        try {
-                            JSONObject sendData = new JSONObject();
-                            sendData.put("seed", etSeed.getText().toString().trim());
-                            Log.w("json", "" + sendData);
-                            checkSeed("authSeed", sendData);
+                            startSeed("authSeed", sendData);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -159,88 +119,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void generateQR(String seed) {
-        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-        try {
-            BitMatrix bitMatrix = multiFormatWriter.encode(seed, BarcodeFormat.QR_CODE, 500, 500);
-            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-            ivQR.setImageBitmap(bitmap);
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String getDateTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "ss", Locale.getDefault());
-        Date date = new Date();
-        return dateFormat.format(date);
-    }
-
-    public String getDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyyMMddHHmm", Locale.getDefault());
-        Date date = new Date();
-        return dateFormat.format(date);
-    }
-
-    private Runnable renew = new Runnable() {
-        @Override
-        public void run() {
-            Log.w("ss", "" + getDateTime());
-            int value1 = 60;
-            int value2 = Integer.parseInt(getDateTime());
-            int value3 = value1 - value2;
-            pbTime.setProgress(value3);
-            tvSecond.setText("" + value3);
-            if(value3 == 60) {
-                Log.w("date", "" + getDate());
-                String textQR = etSeed.getText().toString().trim() + "|" + encryptSeed(etSeed.getText().toString().trim() + getDate());
-                Log.w("txtQR", textQR);
-                generateQR(textQR);
-            }
-            if (value3 <= 10)
-            {
-                tvSecond.setTextColor(Color.RED);
-                tvTime.setTextColor(Color.RED);
-            } else {
-                tvSecond.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvTime.setTextColor(getResources().getColor(R.color.colorPrimary));
-            }
-            startTimer();
-        }
-    };
-
-    public void startTimer() {
-        handler.postDelayed(renew, 1000);
-    }
-
-    private static String encryptSeed(String seed) {
-        String sha256 = "";
-        try {
-            MessageDigest crypt = MessageDigest.getInstance("SHA-256");
-            crypt.reset();
-            crypt.update(seed.getBytes("UTF-8"));
-            sha256 = byteToHex(crypt.digest());
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return sha256;
-    }
-
-    private static String byteToHex(final byte[] hash) {
-        Formatter formatter = new Formatter();
-        for (byte b : hash) {
-            formatter.format("%02x", b);
-        }
-        String result = formatter.toString();
-        formatter.close();
-        return result;
-    }
-
     public boolean connectionTest() {
         boolean connected = false;
         ConnectivityManager connection = (ConnectivityManager) MainActivity.this
@@ -252,66 +130,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return connected;
-    }
-
-    private void checkSeed(String direction, JSONObject data) {
-
-        String url = getString(R.string.url) + "/" + direction;
-
-        ProgressDialog progressDialog;
-        progressDialog = new ProgressDialog(this);
-        //progressDialog.setMax(100);
-        progressDialog.setMessage("Cargando...");
-        progressDialog.setTitle("Revisando la Informacion");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.show();
-        progressDialog.setCancelable(false);
-
-        RequestQueue requestQueue;
-        requestQueue = Volley.newRequestQueue(this);
-        JsonObjectRequest jsonObjectRequest;
-
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, data, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                progressDialog.dismiss();
-                Log.w("response", "" + response);
-                try {
-                    if (response.getInt("code") == 0) {
-                        String textQR = etSeed.getText().toString().trim() + "|" + encryptSeed(etSeed.getText().toString().trim() + getDate());
-                        Log.w("txtQR", textQR);
-                        generateQR(textQR);
-                        startTimer();
-                        session(etSeed.getText().toString().trim());
-                        Toast.makeText(MainActivity.this, response.getString("description"), Toast.LENGTH_LONG).show();
-                        btnSend.setVisibility(View.GONE);
-                        btnRenew.setVisibility(View.VISIBLE);
-                    } else {
-                        Toast.makeText(MainActivity.this, response.getString("description"), Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.w("error", "" + error);
-                progressDialog.dismiss();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<>();
-                params.put("Content-Type", "application/json");
-                //params.put("Authorization", "Bearer " + Utils.readSharedSetting(context, "access_token", ""));
-                return params;
-            }
-        };
-
-        requestQueue.add(jsonObjectRequest);
     }
 
     public String checkSession() throws Exception {
@@ -327,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         return token;
     }
 
-    public void session(String token) throws Exception {
+    public void session(String token, String json_data) throws Exception {
         bd connection = new bd(this);
         connection.open();
         Cursor cursor = connection.searchSessionActive();
@@ -335,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             int id = cursor.getInt(0);
             connection.updateSession(id, token, getTime());
         }
-        connection.createSession(token, getTime());
+        connection.createSession(token, json_data, getTime());
         connection.close();
     }
 
@@ -380,19 +198,72 @@ public class MainActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 Log.w("response", "" + response);
                 try {
-                    if (response.getInt("code") == 0) {
-                        String textQR = etSeed.getText().toString().trim() + "|" + encryptSeed(etSeed.getText().toString().trim() + getDate());
-                        Log.w("txtQR", textQR);
-                        generateQR(textQR);
-                        startTimer();
-                        session(etSeed.getText().toString().trim());
-                        Toast.makeText(MainActivity.this, response.getString("description"), Toast.LENGTH_LONG).show();
-                        btnSend.setVisibility(View.GONE);
-                        btnRenew.setVisibility(View.VISIBLE);
+                    if (response.getInt("CODE") == 0) {
+                        Toast.makeText(MainActivity.this, response.getString("DESCRIPTION"), Toast.LENGTH_LONG).show();
+                        Intent ir = new Intent(MainActivity.this, ViewQR.class);
+                        startActivity(ir);
+                        finish();
                     } else {
                         closedSession(etSeed.getText().toString().trim());
                         etSeed.setText("");
-                        Toast.makeText(MainActivity.this, response.getString("description"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, response.getString("DESCRIPTION"), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.w("error", "" + error);
+                progressDialog.dismiss();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/json");
+                //params.put("Authorization", "Bearer " + Utils.readSharedSetting(context, "access_token", ""));
+                return params;
+            }
+        };
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    private void startSeed(String direction, JSONObject data) {
+
+        String url = getString(R.string.url) + "/" + direction;
+
+        ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(this);
+        //progressDialog.setMax(100);
+        progressDialog.setMessage("Cargando...");
+        progressDialog.setTitle("Revisando la Informacion");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+        progressDialog.setCancelable(false);
+
+        RequestQueue requestQueue;
+        requestQueue = Volley.newRequestQueue(this);
+        JsonObjectRequest jsonObjectRequest;
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, data, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                progressDialog.dismiss();
+                Log.w("response", "" + response);
+                try {
+                    if (response.getInt("CODE") == 0) {
+                        session(etSeed.getText().toString().trim(), response.toString());
+                        Toast.makeText(MainActivity.this, response.getString("DESCRIPTION"), Toast.LENGTH_LONG).show();
+                        Intent ir = new Intent(MainActivity.this, ViewQR.class);
+                        startActivity(ir);
+                        finish();
+                    } else {
+                        Toast.makeText(MainActivity.this, response.getString("DESCRIPTION"), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

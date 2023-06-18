@@ -11,6 +11,7 @@ public class bd {
 
     private static final String sessionId = "_id";
     private static final String token = "token";
+    private static final String json_data = "json_data";
     private static final String status = "status";
     private static final String created_at = "created_at";
     private static final String updated_at = "updated_at";
@@ -36,6 +37,7 @@ public class bd {
 
             db.execSQL("CREATE TABLE " + sessions + "(" + sessionId + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
                     + token + " TEXT NOT NULL, "
+                    + json_data + " TEXT NOT NULL, "
                     + status + " TEXT NOT NULL, "
                     + created_at + " TEXT NOT NULL, "
                     + updated_at + " TEXT NOT NULL);");
@@ -65,13 +67,14 @@ public class bd {
         bdHelper.close();
     }
 
-    public long createSession(String token, String date)
+    public long createSession(String token, String json_data, String date)
             throws SQLException {
         // TODO Auto-generated method stub
         String status = "Active";
 
         ContentValues cv = new ContentValues();
         cv.put(this.token, token);
+        cv.put(this.json_data, json_data);
         cv.put(this.status, status);
         cv.put(this.created_at, date);
         cv.put(this.updated_at, date);
