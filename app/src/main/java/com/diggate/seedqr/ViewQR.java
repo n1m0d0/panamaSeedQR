@@ -46,7 +46,6 @@ public class ViewQR extends AppCompatActivity {
     ImageView ivQR;
     ImageView ivPhoto1;
     ImageView ivPhoto2;
-    TextView tvTime;
     TextView tvSecond;
     ProgressBar pbTime;
     JSONObject jsonObject;
@@ -64,7 +63,6 @@ public class ViewQR extends AppCompatActivity {
         tvName = findViewById(R.id.tvName);
 
         ivQR = findViewById(R.id.ivQR);
-        tvTime = findViewById(R.id.tvTime);
         tvSecond = findViewById(R.id.tvSecond);
         pbTime = findViewById(R.id.pbTime);
 
@@ -220,10 +218,8 @@ public class ViewQR extends AppCompatActivity {
             if (value3 <= 10)
             {
                 tvSecond.setTextColor(Color.RED);
-                tvTime.setTextColor(Color.RED);
             } else {
                 tvSecond.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvTime.setTextColor(getResources().getColor(R.color.colorPrimary));
             }
             startTimer();
         }
