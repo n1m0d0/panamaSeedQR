@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -49,7 +50,6 @@ public class ViewQR extends AppCompatActivity {
     TextView tvSecond;
     ProgressBar pbTime;
     JSONObject jsonObject;
-    int status = 0;
     String token;
 
     private Handler handler = new Handler();
@@ -58,6 +58,7 @@ public class ViewQR extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_qr);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         llBody = findViewById(R.id.llBody);
         tvName = findViewById(R.id.tvName);
