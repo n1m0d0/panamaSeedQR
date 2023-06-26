@@ -47,6 +47,7 @@ public class ViewQR extends AppCompatActivity {
     ImageView ivQR;
     ImageView ivPhoto1;
     ImageView ivPhoto2;
+    ImageView ivPhoto3;
     TextView tvSecond;
     ProgressBar pbTime;
     JSONObject jsonObject;
@@ -69,6 +70,7 @@ public class ViewQR extends AppCompatActivity {
 
         ivPhoto1 = findViewById(R.id.ivPhoto1);
         ivPhoto2 = findViewById(R.id.ivPhoto2);
+        ivPhoto3 = findViewById(R.id.ivPhoto3);
 
         try {
             bd connection = new bd(this);
@@ -117,6 +119,7 @@ public class ViewQR extends AppCompatActivity {
             }
             setImageView(ivPhoto1, credential.getString("PHOTO1"));
             setImageView(ivPhoto2, credential.getString("PHOTO2"));
+            setImageView(ivPhoto3, credential.getString("PHOTO3"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -272,7 +275,7 @@ public class ViewQR extends AppCompatActivity {
         TextView tv;
         tv = new TextView(this);
         tv.setText(texto);
-        tv.setTextSize(20);
+        tv.setTextSize(17);
         LinearLayout.LayoutParams lastTxtParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lastTxtParams.setMargins(0, 10, 0, 0);
         tv.setLayoutParams(lastTxtParams);
